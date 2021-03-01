@@ -1,5 +1,5 @@
 <template>
-    <svg id="svg" xmlns="http://www.w3.org/2000/svg" :width="width + (margin * 2)" :height="height + (margin * 2)" :viewBox="`0 0 ${width + (margin * 2)} ${height + (margin * 2)}`" fill="grey">
+    <svg ref="svg" id="svg" xmlns="http://www.w3.org/2000/svg" :width="width + (margin * 2)" :height="height + (margin * 2)" :viewBox="`0 0 ${width + (margin * 2)} ${height + (margin * 2)}`" fill="grey">
         <filter id="shadow" x="0" y="0" width="200%" height="200%">
             <feDropShadow dx="0" dy="20" stdDeviation="10" flood-color="#000000" flood-opacity="0.4" />
         </filter>
@@ -21,6 +21,8 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
+import { saveSvg } from '../utils/svg'
+
 export default defineComponent({
     props: {
         code: {
@@ -33,6 +35,7 @@ export default defineComponent({
         }
     },
     setup(props) {
+        const svg = ref<HTMLElement>()
         const code = ref<HTMLElement>()
         const width = ref(416)
         const height = ref(224)
@@ -50,15 +53,24 @@ export default defineComponent({
             if (firstChild) {
                 firstChild.style.backgroundColor = ""
             }
+
+            download()
         })
 
+        function download() {
+            if (svg.value) {
+                saveSvg(svg.value, props.filename)
+            }
+        }
+
         return {
+            svg,
             code,
             width,
             height,
             margin,
             padding
         }
-    }
+    },
 })
 </script>
